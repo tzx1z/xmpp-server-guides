@@ -1,0 +1,94 @@
+# Сайт с инструкциями: https://docs.inkov.dev/projects/xmpp-server-guides/
+# Проект Read the Docs подключен как subproject основного проекта домена docs.inkov.dev.
+# Сборка на Read the Docs (.readthedocs.yaml). Локальный просмотр:
+#   pip install -r requirements-docs.txt && mkdocs serve
+#   адрес: http://127.0.0.1:8000/projects/xmpp-server-guides/ (путь берется из site_url)
+
+site_name: xmpp-server-guides
+site_description: Инструкции по установке и настройке XMPP-сервера Prosody на Ubuntu LTS и Fedora Server
+# На Read the Docs адрес берется из окружения сборки, локально - значение по умолчанию.
+# Последняя часть пути - alias subproject в настройках основного проекта.
+site_url: !ENV [READTHEDOCS_CANONICAL_URL, "https://docs.inkov.dev/projects/xmpp-server-guides/"]
+
+repo_url: https://github.com/tzx1z/xmpp-server-guides
+repo_name: tzx1z/xmpp-server-guides
+edit_uri: edit/main/
+
+# Инструкции лежат в корне репозитория рядом с mkdocs.yml, поэтому каталог
+# исходников - корень. Это разрешает плагин same-dir, он же не пускает на сайт
+# служебные файлы из корня (mkdocs.yml, requirements-docs.txt).
+docs_dir: .
+exclude_docs: |
+  /_readthedocs/
+  /site/
+
+# Битые ссылки, якоря и файлы вне навигации - предупреждения,
+# а на Read the Docs (mkdocs.fail_on_warning) - ошибка сборки
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+# Новую инструкцию нужно добавить в оба раздела,
+# иначе строгая сборка завершится ошибкой
+nav:
+  - Русский:
+      - Обзор: README.md
+      - Ubuntu 22.04 и 3x-ui: GUIDE_XMPP_Prosody_Ubuntu_22.04_HAProxy_3x-ui.md
+      - Ubuntu 24.04: GUIDE_XMPP_Prosody_Ubuntu_24.04.md
+      - Ubuntu 26.04: GUIDE_XMPP_Prosody_Ubuntu_26.04.md
+      - Fedora Server 44: GUIDE_XMPP_Prosody_Fedora_44.md
+  - English:
+      - Overview: README.en.md
+      - Ubuntu 22.04 and 3x-ui: GUIDE_XMPP_Prosody_Ubuntu_22.04_HAProxy_3x-ui.en.md
+      - Ubuntu 24.04: GUIDE_XMPP_Prosody_Ubuntu_24.04.en.md
+      - Ubuntu 26.04: GUIDE_XMPP_Prosody_Ubuntu_26.04.en.md
+      - Fedora Server 44: GUIDE_XMPP_Prosody_Fedora_44.en.md
+
+theme:
+  name: material
+  language: ru
+  features:
+    - content.action.edit
+    - content.code.copy
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Темная тема
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Светлая тема
+
+plugins:
+  - same-dir
+  - search:
+      lang: [ru, en]
+
+markdown_extensions:
+  - tables
+  # Номер первого пункта нумерованного списка сохраняется (шаг "4." после блока кода)
+  - sane_lists
+  - toc:
+      permalink: true
+      # Якоря как на GitHub и GitLab: кириллица сохраняется,
+      # ссылки из оглавлений инструкций (#1-введение) работают
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.highlight
+  - pymdownx.superfences
+  # Чек-листы "- [ ]" в разделе 13
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  # Ссылки из URL без разметки, как на GitHub и GitLab
+  - pymdownx.magiclink
